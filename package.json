@@ -1,0 +1,13 @@
+{
+  "name": "ffxiv-tether-webgl",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "AJ",
+  "dependencies": {
+    "express": "^4.17.1",
+    "postprocessing": "^6.26.3",
+    "three": "^0.137.5"
+  }
+}
