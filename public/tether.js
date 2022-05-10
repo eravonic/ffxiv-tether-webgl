@@ -66,22 +66,11 @@ export function fragmentShader()
         r0.xyz = r0.xyz / r0.www;
         r1 = positionCopy / positionCopy.wwww;
         r1 = MVPI * r1;
-        r1.xyz = r1.xyz / r1.www;
-        r0.xyz = r0.xyz + (-r1.xyz);
-        r0.x = dot(r0.xyz, r0.xyz);
-        r0.x = sqrt(r0.x);
-        r0.x = r0.x / screenSize.w;
-        r0.x = min(r0.x, 1.0);
-        r0.x = r0.x * r0.x;
-        r0.yz = texture(distortion, uVu.zw).yz;
-        r0.yz = r0.yz + vec2(-0.5, -0.5);
-        r0.yz = r0.yz * distortionStrength.xx;
-        r0.yz = r0.yz * distortionStrength.zz + uVu.xy;
-        r1 = texture(colorT, r0.yz);
-        r1 = r1 + vec4(-1.0, -1.0, -1.0, -1.0);
-        r1 = instanceParams.yyyz * r1 + vec4(1.0, 1.0, 1.0, 1.0);
-        r1 = r1 * color;
-        r1 = r1 * modulateColor;
+        r0.xyz -= r1.xyz / r1.www;
+        r0.x = pow(min(sqrt(dot(r0.xyz, r0.xyz)) / screenSize.w, 1.0), 2.0);
+        r0.yz = (texture(distortion, uVu.zw).yz - vec2(0.5, 0.5)) * distortionStrength.xx * distortionStrength.zz + uVu.xy;
+        r1 = instanceParams.yyyz * (texture(colorT, r0.yz) - vec4(1.0, 1.0, 1.0, 1.0)) + vec4(1.0, 1.0, 1.0, 1.0);
+        r1 = r1 * color * modulateColor;
         r0.x = clamp(r0.x * r1.w, 0.0, 1.0);
         r0.yzw = r1.xyz * toneMapParam.www;
         r1.x = r0.x - 0.003922;
@@ -89,11 +78,11 @@ export function fragmentShader()
         if (r1.x < 0.0)
             discard;
         r0.x = 1.0;
-        r0.x = r0.x - 1.0;
-        r0.x = (toneMapParam.x * r0.x) + 1.0;
-        r0.x = 1.0 / sqrt(r0.x);
-        r0.x = r0.x - 1.0;
-        r0.x = instanceParams.w * r0.x + 1.0;
+        //r0.x = r0.x - 1.0;
+        //r0.x = (toneMapParam.x * r0.x) + 1.0;
+        //r0.x = 1.0 / sqrt(r0.x);
+        //r0.x = r0.x - 1.0;
+        //r0.x = instanceParams.w * r0.x + 1.0;
         diffuseColor.xyz = r0.xxx * r0.yzw;
     }`;
 }
